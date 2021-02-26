@@ -1,7 +1,9 @@
-package com.dataSets;
+package com.entities;
+
+import com.resources.ClientResource;
 
 import javax.persistence.*;
-import java.io.Serializable;
+import java.util.Set;
 
 @Entity
 @SuppressWarnings("UnusedDeclaration")
@@ -9,21 +11,27 @@ public class Client {
     @Id
     @GeneratedValue
     private Long id;
+    @Column(unique = true, updatable = false)
     private String login;
     private String name;
     private String password;
     private Integer balance;
-
-    public Client() {
+/*
+    @OneToMany
+    private Set<Item> cart;
+    @OneToMany
+    private Set<Purchase> purchaseHistory;
+*/
+    public Client(){
     }
 
     public Client(String login, String password) {
         this.login = login;
         this.password = password;
+        this.balance = 0;
     }
 
-    public Client(Long id, String login, String name, String password, Integer balance) {
-        this.id = id;
+    public Client(String login, String name, String password, Integer balance) {
         this.login = login;
         this.name = name;
         this.password = password;
@@ -74,5 +82,9 @@ public class Client {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 '}';
+    }
+
+    public ClientResource getResource(){
+        return new ClientResource(login, name, password, balance);
     }
 }
