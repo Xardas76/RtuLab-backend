@@ -8,13 +8,33 @@ public class ClientResource {
     private String password;
     private Integer balance;
 
-    ClientResource() {}
-
     public ClientResource(String login, String name, String password, Integer balance) {
         this.login = login;
         this.name = name;
         this.password = password;
         this.balance = balance;
+    }
+
+
+    public ClientResource(String login, String name, String password) {
+        this.login = login;
+        this.name = name;
+        this.password = password;
+        this.balance = 0;
+    }
+
+    public ClientResource(String login, String password) {
+        this.login = login;
+        this.name = login;
+        this.password = password;
+        this.balance = 0;
+    }
+
+    public ClientResource(String login) {
+        this.login = login;
+        this.name = login;
+        this.password = login;
+        this.balance = 0;
     }
 
     public String getLogin() {
@@ -31,5 +51,10 @@ public class ClientResource {
 
     public Integer getBalance() {
         return balance;
+    }
+
+    public Client getClient() {
+        return new Client(null, login,
+                name, password, balance);
     }
 }

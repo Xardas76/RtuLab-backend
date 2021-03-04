@@ -19,19 +19,14 @@ public class Client {
 /*
     @OneToMany
     private Set<Item> cart;
+    */
     @OneToMany
     private Set<Purchase> purchaseHistory;
-*/
-    public Client(){
-    }
 
-    public Client(String login, String password) {
-        this.login = login;
-        this.password = password;
-        this.balance = 0;
-    }
+    public Client(){ }
 
-    public Client(String login, String name, String password, Integer balance) {
+    public Client(Long id, String login, String name, String password, Integer balance) {
+        this.id = id;
         this.login = login;
         this.name = name;
         this.password = password;
@@ -74,6 +69,14 @@ public class Client {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void addPurchase(Purchase purchase) {
+        purchaseHistory.add(purchase);
+    }
+
+    public Set<Purchase> getHistory() {
+        return purchaseHistory;
     }
 
     @Override

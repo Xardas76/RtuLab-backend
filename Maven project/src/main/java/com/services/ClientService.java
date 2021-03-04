@@ -20,43 +20,41 @@ public class ClientService {
     }
 
     @Transactional(readOnly = true)
-    public Client getClientByLogin(String login) {
+    public ClientResource getClientByLogin(String login) {
         List<Client> found = repository.findByLogin(login);
         if (found.isEmpty()){
             return null;
         }
         else {
-            return found.get(0);
+            return found.get(0).getResource();
         }
     }
 
     @Transactional(readOnly = true)
-    public Client getClientById(Long id) {
+    public ClientResource getClientById(Long id) {
         Optional<Client> res = repository.findById(id);
         if (res.isEmpty()){
             return null;
         }
         else {
-            return res.get();
+            return res.get().getResource();
         }
     }
 
     public Long add(ClientResource client) {
-        Client created = new Client(client.getLogin(),
-                client.getName(), client.getPassword(), client.getBalance());
+        Client created = client.getClient();
         created = repository.save(created);
         return created.getId();
+    }
+
+    public Long makePurchase(ClientResource client) {
+        return 0L;
     }
 
     @Transactional(readOnly = true)
     public boolean exists(ClientResource client) {
         List<Client> found = repository.findByLoginAndNameAndPasswordAndBalance(client.getLogin(),
                 client.getName(), client.getPassword(), client.getBalance());
-        if (found.isEmpty()){
-            return false;
-        }
-        else {
-            return true;
-        }
+        return !found.isEmpty();
     }
 }
