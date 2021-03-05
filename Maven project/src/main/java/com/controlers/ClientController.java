@@ -2,7 +2,6 @@ package com.controlers;
 
 import com.resources.ClientResource;
 import com.services.ClientService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,8 +11,11 @@ import java.net.URI;
 
 @RestController
 public class ClientController {
-    @Autowired
     private ClientService clientService;
+
+    public ClientController(ClientService clientService) {
+        this.clientService = clientService;
+    }
 
     @GetMapping("/client/{id}") //Accepts either login or id.
     @ResponseBody // Returns JSON ClientResource
@@ -26,10 +28,13 @@ public class ClientController {
         catch (NumberFormatException e) {
             client = clientService.getClientByLogin(input);
         }
+        catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
         if (client == null) {
             return ResponseEntity.notFound().build();
         }
-        return new ResponseEntity<>(client, HttpStatus.OK);
+        return ResponseEntity.ok(client);
     }
 
     @GetMapping("/client/{userId}/name") //Returns name of client by login/id
@@ -43,12 +48,12 @@ public class ClientController {
             client = clientService.getClientByLogin(input);
         }
         catch (Exception e){
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
         if (client == null) {
-            return new ResponseEntity<>("Nothing was found", HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
-        return new ResponseEntity<>(client.getName(), HttpStatus.OK);
+        return ResponseEntity.ok(client.getName());
     }
 
     @PostMapping("/client") //Accepts a client in JSON

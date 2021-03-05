@@ -1,7 +1,5 @@
 package com.resources;
 
-import com.entities.Client;
-
 public class ClientResource {
     private String login;
     private String name;
@@ -14,7 +12,6 @@ public class ClientResource {
         this.password = password;
         this.balance = balance;
     }
-
 
     public ClientResource(String login, String name, String password) {
         this.login = login;
@@ -37,6 +34,9 @@ public class ClientResource {
         this.balance = 0;
     }
 
+    public ClientResource() {
+    }
+
     public String getLogin() {
         return login;
     }
@@ -51,10 +51,5 @@ public class ClientResource {
 
     public Integer getBalance() {
         return balance;
-    }
-
-    public Client getClient() {
-        return new Client(null, login,
-                name, password, balance);
     }
 }

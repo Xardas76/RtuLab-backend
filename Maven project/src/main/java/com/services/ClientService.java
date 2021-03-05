@@ -42,7 +42,8 @@ public class ClientService {
     }
 
     public Long add(ClientResource client) {
-        Client created = client.getClient();
+        Client created = new Client(null, client.getLogin(),
+                client.getName(), client.getPassword(), client.getBalance());
         created = repository.save(created);
         return created.getId();
     }
