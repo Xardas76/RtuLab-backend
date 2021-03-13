@@ -1,5 +1,6 @@
 package com.resources;
 
+//Class, representing Client, which can always be serialized or deserialized.
 public class ClientResource {
     private String login;
     private String name;

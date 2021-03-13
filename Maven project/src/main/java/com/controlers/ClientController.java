@@ -1,6 +1,10 @@
 package com.controlers;
 
+import com.exceptions.ClientNotFoundException;
+import com.exceptions.LoginIsTaken;
+import com.exceptions.WrongDataFormatException;
 import com.resources.ClientResource;
+import com.resources.PurchaseResource;
 import com.services.ClientService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,10 +12,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 public class ClientController {
-    private ClientService clientService;
+    private final ClientService clientService;
 
     public ClientController(ClientService clientService) {
         this.clientService = clientService;
@@ -19,52 +24,66 @@ public class ClientController {
 
     @GetMapping("/client/{id}") //Accepts either login or id.
     @ResponseBody // Returns JSON ClientResource
-    public ResponseEntity<ClientResource> getClient(@PathVariable("id") String input){
+    public ResponseEntity<ClientResource> getClientJSON(@PathVariable("id") String input){
         ClientResource client;
-        try{
-            Long id = Long.parseLong(input);
-            client = clientService.getClientById(id);
+        try {
+            client = clientService.getClientResourceByIdOrLogin(input); //null if there is no client
         }
-        catch (NumberFormatException e) {
-            client = clientService.getClientByLogin(input);
+        catch (ClientNotFoundException e) {
+            return ResponseEntity.notFound().build();
         }
         catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-        if (client == null) {
-            return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(client);
     }
 
     @GetMapping("/client/{userId}/name") //Returns name of client by login/id
-    public ResponseEntity<String> getName(@PathVariable("userId") String input){
+    public ResponseEntity<String> getClientName(@PathVariable("userId") String input){
         ClientResource client;
-        try{
-            Long id = Long.parseLong(input);
-            client = clientService.getClientById(id);
+        try {
+            client = clientService.getClientResourceByIdOrLogin(input); //null if there is no client
         }
-        catch (NumberFormatException e) {
-            client = clientService.getClientByLogin(input);
+        catch (ClientNotFoundException e) {
+            return ResponseEntity.notFound().build();
         }
         catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-        if (client == null) {
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.ok(client.getName());
     }
 
-    @PostMapping("/client") //Accepts a client in JSON
-    @ResponseBody //Adds the client to DB and returns id
-    public ResponseEntity<Long> addClient(@RequestBody ClientResource client) {
-        if (clientService.exists(client)) {
-            return ResponseEntity.badRequest().build();
-        }
-        Long id = clientService.add(client);
-        if (id == null) {
+
+    @GetMapping("/{id}/purchases") //Accepts either login or id of client.
+    @ResponseBody // Returns List JSON
+    public ResponseEntity<List<PurchaseResource>> getClientPurchaseStory(@PathVariable("id") String input){
+        List<PurchaseResource> responseBody;
+        try {
+            responseBody = clientService.getClientPurchases(input);
+        } catch (ClientNotFoundException e) {
             return ResponseEntity.notFound().build();
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+        return ResponseEntity.ok(responseBody);
+    }
+
+    @PostMapping("/client") //Accepts a client in JSON
+    // Adds the client to DB and returns id
+    public ResponseEntity<Long> addClient(@RequestBody ClientResource client) {
+        Long id;
+        try {
+            id = clientService.add(client);
+        }
+        catch (WrongDataFormatException e) {
+            return ResponseEntity.badRequest().build();
+        } catch (LoginIsTaken e){
+            return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+        if (id == null) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                     .path("/{id}")

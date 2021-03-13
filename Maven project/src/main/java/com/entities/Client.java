@@ -3,6 +3,7 @@ package com.entities;
 import com.resources.ClientResource;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -21,7 +22,7 @@ public class Client {
     private Set<Item> cart;
     */
     @OneToMany
-    private Set<Purchase> purchaseHistory;
+    private List<Purchase> purchaseHistory;
 
     public Client(){ }
 
@@ -31,6 +32,14 @@ public class Client {
         this.name = name;
         this.password = password;
         this.balance = balance;
+    }
+
+    public  Client(ClientResource resource) {
+        id = null;
+        login = resource.getLogin();
+        name = resource.getName();
+        password = resource.getPassword();
+        balance = resource.getBalance();
     }
 
     public Long getId() {
@@ -75,7 +84,7 @@ public class Client {
         purchaseHistory.add(purchase);
     }
 
-    public Set<Purchase> getHistory() {
+    public List<Purchase> getPurchases() {
         return purchaseHistory;
     }
 

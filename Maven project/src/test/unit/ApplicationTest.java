@@ -1,9 +1,8 @@
-package test;
+package unit;
 
 import com.Application;
 import com.controlers.ClientController;
 import com.controlers.PurchaseController;
-import com.services.ClientService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

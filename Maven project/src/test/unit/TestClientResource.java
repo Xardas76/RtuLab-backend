@@ -1,4 +1,4 @@
-package test;
+package unit;
 
 import com.entities.Client;
 import com.resources.ClientResource;

@@ -1,4 +1,4 @@
-package test;
+package unit;
 
 import com.Application;
 import com.controlers.ClientController;
@@ -6,10 +6,10 @@ import com.resources.ClientResource;
 import com.services.ClientService;
 import org.junit.jupiter.api.Test;
 
-import static org.mockito.ArgumentMatchers.contains;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.mockito.Mockito.when;
+import static org.hamcrest.Matchers.is;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -27,10 +27,10 @@ public class TestClientController {
 
     @Test
     public void findExistingClient() throws Exception{
-        when(clientService.getClientById(236L)).thenReturn(new ClientResource("jacksparrow"));
+        when(clientService.getClientResourceByIdOrLogin("236")).thenReturn(new ClientResource("jacksparrow"));
 
         mockMvc.perform(get("/client/{userId}", 236))
                 .andExpect(status().isOk())
-                .andExpect(content().json(contains("jacksparrow")));
+                .andExpect(jsonPath("$.login", is("jacksparrow")));
     }
 }

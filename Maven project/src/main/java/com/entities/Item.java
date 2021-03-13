@@ -1,5 +1,7 @@
 package com.entities;
 
+import com.resources.ItemResource;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -19,6 +21,13 @@ public class Item {
         this.name = name;
         this.description = description;
         this.cost = cost;
+    }
+
+    public  Item(ItemResource resource) {
+        id = null;
+        name = resource.getName();
+        description = resource.getDescription();
+        cost = resource.getCost();
     }
 
     public Integer getCost() {
