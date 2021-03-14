@@ -20,6 +20,7 @@ public class Client {
 /*
     @OneToMany
     private Set<Item> cart;
+    //Cart feature to be developed later
     */
     @OneToMany
     private List<Purchase> purchaseHistory;

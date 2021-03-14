@@ -1,5 +1,3 @@
-package unit;
-
 import com.Application;
 import com.controlers.ClientController;
 import com.resources.ClientResource;

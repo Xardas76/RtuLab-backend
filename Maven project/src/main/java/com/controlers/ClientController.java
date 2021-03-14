@@ -33,13 +33,14 @@ public class ClientController {
             return ResponseEntity.notFound().build();
         }
         catch (Exception e){
+            System.out.println("---> " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
         return ResponseEntity.ok(client);
     }
 
-    @GetMapping("/client/{userId}/name") //Returns name of client by login/id
-    public ResponseEntity<String> getClientName(@PathVariable("userId") String input){
+    @GetMapping("/client/{id}/name") //Returns name of client by login/id
+    public ResponseEntity<String> getClientName(@PathVariable("id") String input){
         ClientResource client;
         try {
             client = clientService.getClientResourceByIdOrLogin(input); //null if there is no client
@@ -48,6 +49,7 @@ public class ClientController {
             return ResponseEntity.notFound().build();
         }
         catch (Exception e){
+            System.out.println("---> " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
         return ResponseEntity.ok(client.getName());
@@ -63,6 +65,7 @@ public class ClientController {
         } catch (ClientNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e){
+            System.out.println("---> " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
         return ResponseEntity.ok(responseBody);
@@ -80,6 +83,7 @@ public class ClientController {
         } catch (LoginIsTaken e){
             return ResponseEntity.badRequest().build();
         } catch (Exception e) {
+            System.out.println("---> " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
         if (id == null) {

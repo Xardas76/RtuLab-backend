@@ -1,14 +1,13 @@
-package integration;
 
 import com.Application;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.resources.ClientResource;
+import com.services.ClientService;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -18,18 +17,30 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-//NEED RUNNING MYSQL DB TO PASS
+//Uses H2 in-memory database (not the production one)
 @SpringBootTest(classes = Application.class)
 @AutoConfigureMockMvc
-@AutoConfigureTestDatabase
+//@AutoConfigureTestDatabase
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class IntegrationTestClientController {
     @Autowired
     private MockMvc mvc;
+    @Autowired
+    ClientService service;
 
     @Test
     public void postTooShortLogin() throws Exception {
         ClientResource client = new ClientResource("bob");
+
+        mvc.perform(post("/client")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(client)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void postTooShortPassword() throws Exception {
+        ClientResource client = new ClientResource("bobRoland643", "123");
 
         mvc.perform(post("/client")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -60,9 +71,23 @@ public class IntegrationTestClientController {
     }
 
     @Test
-    @Order(3)
-    public void postExistingClient() throws Exception{
-        ClientResource client = new ClientResource("LittlePony123");
+    @Order(1)
+    public void getExistingClient() throws Exception {
+        Long id = service.add(new ClientResource("NewYorker56"));
+
+        mvc.perform(get("/client/" + id)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content()
+                        .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.password", is("NewYorker56")));
+    }
+
+
+    @Test
+    @Order(2)
+    public void tryToPostExistingClient() throws Exception{
+        ClientResource client = new ClientResource("NewYorker56");
 
         mvc.perform(post("/client")
                 .contentType(MediaType.APPLICATION_JSON)

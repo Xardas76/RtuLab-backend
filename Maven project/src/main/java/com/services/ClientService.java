@@ -4,9 +4,11 @@ import com.entities.Client;
 import com.entities.Item;
 import com.entities.Purchase;
 import com.exceptions.ClientNotFoundException;
+import com.exceptions.ItemNotFoundException;
 import com.exceptions.LoginIsTaken;
 import com.exceptions.WrongDataFormatException;
 import com.repositories.ClientRepository;
+import com.repositories.ItemRepository;
 import com.repositories.PurchaseRepository;
 import com.resources.ClientResource;
 import com.resources.ItemResource;
@@ -21,14 +23,16 @@ import java.util.Optional;
 
 @Component
 public class ClientService {
-    @Autowired
-    private ClientRepository repository;
-    @Autowired
-    private PurchaseRepository purchaseRepository;
+    private final ClientRepository repository;
+    private final PurchaseRepository purchaseRepository;
+    private final ItemRepository itemRepository;
 
-    public ClientService(ClientRepository clientRepository) {
-        this.repository = clientRepository;
+    public ClientService(ClientRepository repository, PurchaseRepository purchaseRepository, ItemRepository itemRepository) {
+        this.repository = repository;
+        this.purchaseRepository = purchaseRepository;
+        this.itemRepository = itemRepository;
     }
+
 
     public ClientResource getClientResourceByIdOrLogin(String loginOrId) throws ClientNotFoundException {
         Client client = findClient(loginOrId);
@@ -66,17 +70,24 @@ public class ClientService {
         return created.getId();
     }
 
-    public PurchaseResource makePurchase(String loginOrId, ItemResource itemResource) throws ClientNotFoundException {
+    public PurchaseResource purchaseItemResource(String loginOrId, ItemResource itemResource) throws ClientNotFoundException {
+        try {
+            return findAndPurchaseItem(loginOrId, itemResource.getName());
+        } catch (ItemNotFoundException e) {
+            Item item = new Item(itemResource);
+            item = itemRepository.save(item);
+            return instantCheckout(item).getResource();
+        }
+    }
+
+    public PurchaseResource findAndPurchaseItem(String loginOrId, String itemNameOrId) throws ClientNotFoundException, ItemNotFoundException {
         Client client = findClient(loginOrId);
         if (client == null) {
             throw new ClientNotFoundException();
         }
-        Item item = new Item(itemResource);
-        List<Item> items = new ArrayList<>();
-        items.add(item);
-        Purchase purchase = new Purchase(items);
-        purchase = purchaseRepository.save(purchase);
-        return purchase.getResource();
+        Item item = findItem(itemNameOrId);
+        if (item == null) throw new ItemNotFoundException();
+        return instantCheckout(item).getResource();
     }
 
     @Transactional(readOnly = true)
@@ -104,15 +115,46 @@ public class ClientService {
         return found;
     }
 
+    @Transactional(readOnly = true)
+    private Item findItem (String nameOrId) { //MAY RETURN NULL!
+        Item found;
+        try{
+            Long id = Long.parseLong(nameOrId);
+            Optional<Item> optional = itemRepository.findById(id);
+            if (optional.isEmpty()) {
+                found = null;
+            }
+            else {
+                found = optional.get();
+            }
+        }
+        catch (NumberFormatException e) {
+            List<Item> list = itemRepository.findByName(nameOrId);
+            if (list.isEmpty()) {
+                found = null;
+            }
+            else {
+                found = list.get(0);
+            }
+        }
+        return found;
+    }
+
+    private Purchase instantCheckout (Item item) {
+        List<Item> items = new ArrayList<>();
+        items.add(item);
+        Purchase purchase = new Purchase(items);
+        return purchaseRepository.save(purchase);
+    }
+
     private boolean validateLogin(ClientResource client) {
-        String name = client.getName();
-        return name.matches("^[a-zA-Z0-9._-]{3,}$")
-                && Character.isLetter(name.charAt(0));
+        String login = client.getLogin();
+        return login.matches("^[a-zA-Z0-9._-]{3,}$")
+                && Character.isLetter(login.charAt(0));
     }
 
     private boolean validatePassword (ClientResource client) {
-        String name = client.getName();
-        return name.matches("^[a-zA-Z0-9!?.-]{6,}$")
-                && Character.isLetter(name.charAt(0));
+        String password = client.getPassword();
+        return password.matches("^[a-zA-Z0-9!?.-]{6,}$");
     }
 }

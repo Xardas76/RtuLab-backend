@@ -11,6 +11,12 @@ public class ItemResource {
         this.cost = cost;
     }
 
+    public ItemResource(String name, Integer cost) {
+        this.name = name;
+        this.cost = cost;
+        this.description = "Simple " + name + ".";
+    }
+
     public ItemResource() {
     }
 
