@@ -54,7 +54,7 @@ public class ClientController {
     }
 
 
-    @GetMapping("/{id}/purchases") //Accepts either login or id of client.
+    @GetMapping("/client/{id}/purchases") //Accepts either login or id of client.
     @ResponseBody // Returns List JSON
     public ResponseEntity<List<PurchaseResource>> getClientPurchaseStory(@PathVariable("id") String input){
         List<PurchaseResource> responseBody;
@@ -91,10 +91,5 @@ public class ClientController {
                     .toUri();
 
         return ResponseEntity.created(uri).body(id);
-    }
-
-    @RequestMapping("/") //Default answer
-    public String index() {
-        return "Welcome message";
     }
 }
