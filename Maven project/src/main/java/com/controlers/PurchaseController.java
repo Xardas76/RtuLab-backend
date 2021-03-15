@@ -27,7 +27,7 @@ public class PurchaseController {
         return null;
     }
 */
-    @PostMapping("/purchase/{id}") //Accepts JSON Item {name, description, cost}
+    @PutMapping("/purchase/{id}") //Accepts JSON Item {name, description, cost}
     public ResponseEntity<PurchaseResource> purchaseItemResource(@PathVariable String id, @RequestBody ItemResource item) {
         PurchaseResource purchase;
         try {

@@ -15,7 +15,7 @@ public class Purchase {
     private String date;
     private Integer cost;
 
-    @OneToMany
+    @ManyToMany
     private List<Item> items;
 
     Purchase() {}

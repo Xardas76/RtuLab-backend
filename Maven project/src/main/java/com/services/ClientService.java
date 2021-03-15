@@ -13,7 +13,6 @@ import com.repositories.PurchaseRepository;
 import com.resources.ClientResource;
 import com.resources.ItemResource;
 import com.resources.PurchaseResource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -74,9 +73,10 @@ public class ClientService {
         try {
             return findAndPurchaseItem(loginOrId, itemResource.getName());
         } catch (ItemNotFoundException e) {
+            Client client = findClient(loginOrId);
             Item item = new Item(itemResource);
             item = itemRepository.save(item);
-            return instantCheckout(item).getResource();
+            return instantCheckout(client, item).getResource();
         }
     }
 
@@ -87,7 +87,7 @@ public class ClientService {
         }
         Item item = findItem(itemNameOrId);
         if (item == null) throw new ItemNotFoundException();
-        return instantCheckout(item).getResource();
+        return instantCheckout(client, item).getResource();
     }
 
     @Transactional(readOnly = true)
@@ -140,11 +140,14 @@ public class ClientService {
         return found;
     }
 
-    private Purchase instantCheckout (Item item) {
+    private Purchase instantCheckout (Client client, Item item) {
         List<Item> items = new ArrayList<>();
         items.add(item);
         Purchase purchase = new Purchase(items);
-        return purchaseRepository.save(purchase);
+        purchase = purchaseRepository.save(purchase);
+        client.addPurchase(purchase);
+        repository.save(client);
+        return purchase;
     }
 
     private boolean validateLogin(ClientResource client) {
