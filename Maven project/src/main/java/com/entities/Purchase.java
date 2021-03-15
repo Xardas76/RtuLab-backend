@@ -29,7 +29,7 @@ public class Purchase {
         }
     }
 
-    Purchase(List<Item> items, String date) {
+    public Purchase(List<Item> items, String date) {
         this.date = date;
         this.items = items;
         this.cost = 0;

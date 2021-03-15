@@ -49,8 +49,18 @@ public class TestPurchaseResource {
 
     }
 
+    @Test
     //FULL Item -> Purchase -> PurchaseResource -> Json test
     public void fullCycleTest() throws IOException {
+        Item item = new Item("Monitor", "LG monitor", 15300);
+        List<Item> list = new ArrayList<>();
+        list.add(item);
+        Purchase purchase = new Purchase(list, "03-15-21");
+        PurchaseResource resource = purchase.getResource();
+        JsonContent<PurchaseResource> result = json.write(resource);
 
+        assertThat(result).extractingJsonPathStringValue("$.date").isEqualTo("03-15-21");
+        assertThat(result).extractingJsonPathNumberValue("$.cost").isEqualTo(15300);
+        assertThat(result).extractingJsonPathStringValue("$.items[0]").isEqualTo("Monitor: 15300");
     }
 }
