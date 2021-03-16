@@ -1,7 +1,7 @@
 version: "3"
 services:
-  webservice-container:
-    image: webservice
+  webservice:
+    image: xardas76/rtulab-backend
     ports:
       - "8000:8000"
     networks:
