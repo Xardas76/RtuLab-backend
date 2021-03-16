@@ -34,7 +34,7 @@ public class IntegrationTestPurchaseController {
 
         mvc.perform(put("/purchase/" + id)
                 .contentType(MediaType.APPLICATION_JSON)
-        .content(asJsonString(new ItemResource("Doll", 90))))
+                .content(asJsonString(new ItemResource("Doll", 90))))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.cost", is(90)))

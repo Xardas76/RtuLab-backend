@@ -1,0 +1,17 @@
+com\repositories\ClientRepository.class
+com\entities\Client.class
+com\services\ClientService.class
+com\exceptions\ItemNotFoundException.class
+com\repositories\PurchaseRepository.class
+com\exceptions\WrongDataFormatException.class
+com\resources\ItemResource.class
+com\Application.class
+com\entities\Item.class
+com\resources\ClientResource.class
+com\entities\Purchase.class
+com\repositories\ItemRepository.class
+com\exceptions\LoginIsTaken.class
+com\resources\PurchaseResource.class
+com\controlers\PurchaseController.class
+com\exceptions\ClientNotFoundException.class
+com\controlers\ClientController.class
