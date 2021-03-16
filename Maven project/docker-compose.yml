@@ -1,0 +1,21 @@
+version: "3"
+services:
+  webservice-container:
+    image: webservice
+    ports:
+      - "8000:8000"
+    networks:
+      - webservice-mysql
+    depends_on:
+      - mysqldb
+ 
+  mysqldb:
+    image: mysql:8
+    networks:
+      - webservice-mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=bootdb  
+
+networks:
+  webservice-mysql:
