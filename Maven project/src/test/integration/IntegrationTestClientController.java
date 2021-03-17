@@ -1,6 +1,5 @@
 
 import com.Application;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.resources.ClientResource;
 import com.services.ClientService;
 import org.junit.jupiter.api.MethodOrderer;
@@ -34,7 +33,7 @@ public class IntegrationTestClientController {
 
         mvc.perform(post("/client")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(client)))
+                .content(JsonMapper.asJsonString(client)))
                 .andExpect(status().isBadRequest());
     }
 
@@ -44,7 +43,7 @@ public class IntegrationTestClientController {
 
         mvc.perform(post("/client")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(client)))
+                .content(JsonMapper.asJsonString(client)))
                 .andExpect(status().isBadRequest());
     }
 
@@ -55,7 +54,7 @@ public class IntegrationTestClientController {
 
         mvc.perform(post("/client")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(client)))
+                .content(JsonMapper.asJsonString(client)))
                 .andExpect(status().isCreated());
     }
 
@@ -91,15 +90,7 @@ public class IntegrationTestClientController {
 
         mvc.perform(post("/client")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(client)))
+                .content(JsonMapper.asJsonString(client)))
                 .andExpect(status().isBadRequest());
-    }
-
-    private static String asJsonString(final Object obj) {
-        try {
-            return new ObjectMapper().writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 }

@@ -1,5 +1,4 @@
 import com.Application;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.resources.ClientResource;
 import com.resources.ItemResource;
 import com.services.ClientService;
@@ -34,7 +33,7 @@ public class IntegrationTestPurchaseController {
 
         mvc.perform(put("/purchase/" + id)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(new ItemResource("Doll", 90))))
+                .content(JsonMapper.asJsonString(new ItemResource("Doll", 90))))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.cost", is(90)))
@@ -72,13 +71,5 @@ public class IntegrationTestPurchaseController {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.cost", is(60)))
                 .andExpect(jsonPath("$.items[0]", is("Toy: 60")));
-    }
-
-    private static String asJsonString(final Object obj) {
-        try {
-            return new ObjectMapper().writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 }

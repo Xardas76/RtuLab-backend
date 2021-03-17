@@ -5,6 +5,7 @@ import com.services.ClientService;
 import org.junit.jupiter.api.Test;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.hamcrest.Matchers.is;
@@ -12,6 +13,7 @@ import static org.hamcrest.Matchers.is;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -30,5 +32,18 @@ public class TestClientController {
         mockMvc.perform(get("/client/{userId}", 236))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.login", is("jacksparrow")));
+    }
+
+    @Test
+    public void postNewClient() throws Exception{
+        ClientResource client = new ClientResource("barack", "obama");
+
+        when(clientService.add(client))
+                .thenReturn(1L);
+
+        mockMvc.perform(post("/client")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonMapper.asJsonString(client)))
+                .andExpect(status().isCreated());
     }
 }

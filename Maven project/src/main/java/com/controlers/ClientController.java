@@ -15,6 +15,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
+@SuppressWarnings("unused")
 public class ClientController {
     private final ClientService clientService;
 
@@ -78,9 +79,7 @@ public class ClientController {
         try {
             id = clientService.add(client);
         }
-        catch (WrongDataFormatException e) {
-            return ResponseEntity.badRequest().build();
-        } catch (LoginIsTaken e){
+        catch (WrongDataFormatException | LoginIsTaken e) {
             return ResponseEntity.badRequest().build();
         } catch (Exception e) {
             System.out.println("---> " + e.getMessage());

@@ -1,5 +1,6 @@
 package com.resources;
 
+@SuppressWarnings("unused")
 public class ItemResource {
     private String name;
     private String description;

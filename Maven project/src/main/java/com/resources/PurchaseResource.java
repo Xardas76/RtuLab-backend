@@ -2,6 +2,7 @@ package com.resources;
 
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class PurchaseResource {
     private String date;
     private Integer cost;

@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.List;
 
 @Entity
+@SuppressWarnings("unused")
 public class Purchase {
     @Id
     @GeneratedValue
